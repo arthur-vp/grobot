@@ -1,6 +1,8 @@
 #include "Screen.h"
 #include <U8g2lib.h>
 
+// I2C address for the SSD1309 display
+
 // Constructor: Initialize the U8G2 object with default I2C pins
 Screen::Screen()
     : u8g2(U8G2_R0, /* reset=*/U8X8_PIN_NONE) // No reset pin by default
@@ -27,23 +29,40 @@ void Screen::drawText(int x, int y, const char *text)
 }
 
 // Draw a simple smiling face graphic
+// Dessine un visage souriant plus expressif
 void Screen::drawSmiley(int x, int y, int r)
 {
-    // Face outline
-    u8g2.drawCircle(x, y, r, U8G2_DRAW_ALL);
+    // === Visage ===
+    u8g2.drawCircle(x, y, r, U8G2_DRAW_ALL); // Contour du visage
 
-    // Eyes
-    int eyeOffsetX = r / 2;
-    int eyeOffsetY = r / 3;
-    int eyeR = r / 6;
-    u8g2.drawDisc(x - eyeOffsetX, y - eyeOffsetY, eyeR, U8G2_DRAW_ALL);
-    u8g2.drawDisc(x + eyeOffsetX, y - eyeOffsetY, eyeR, U8G2_DRAW_ALL);
+    // === Yeux ===
+    int eyeDistanceX = r * 0.4;
+    int eyeOffsetY   = r * 0.35;
+    int eyeRadius    = r * 0.12;
 
-    // Smile (arc)
-    int smileR = r / 2;
-    int smileY = y + r / 4;
-    u8g2.drawArc(x, smileY, smileR, smileR, 30); // Smile arc from 30 to 150 degrees
+    // Œil gauche
+    u8g2.drawDisc(x - eyeDistanceX, y - eyeOffsetY, eyeRadius, U8G2_DRAW_ALL);
+    // Œil droit
+    u8g2.drawDisc(x + eyeDistanceX, y - eyeOffsetY, eyeRadius, U8G2_DRAW_ALL);
+
+// Sourire faux avec ellipse + masque
+u8g2.drawEllipse(x, mouthY, mouthRadius, r * 0.15, U8G2_DRAW_ALL);
+
+// Masquer la moitié supérieure de l'ellipse
+u8g2.setDrawColor(0); // Couleur "effacement"
+u8g2.drawBox(x - mouthRadius, mouthY - r * 0.15, 2 * mouthRadius, r * 0.15);
+u8g2.setDrawColor(1); // Revenir à dessin normal
+
+
+    // === Joues (optionnel) ===
+    int cheekRadius = r * 0.08;
+    int cheekOffsetX = r * 0.6;
+    int cheekOffsetY = r * 0.15;
+
+    u8g2.drawDisc(x - cheekOffsetX, y + cheekOffsetY, cheekRadius, U8G2_DRAW_ALL); // Joue gauche
+    u8g2.drawDisc(x + cheekOffsetX, y + cheekOffsetY, cheekRadius, U8G2_DRAW_ALL); // Joue droite
 }
+
 
 // Send the current buffer to the display
 void Screen::display()

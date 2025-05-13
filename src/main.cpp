@@ -15,12 +15,26 @@ void setup()
 {
   Serial.begin(9600);
   Wire.begin();
-  motors.stop();
-  scanner.attach();
+  //motors.stop();
+  //scanner.attach();
+
+  // Test of the screen
+  Screen screen;
+
+  screen.begin();
+  screen.clear();
+
+  screen.drawSmiley(64, 32);
+  screen.display();
+  
+  delay(2000);
+  screen.clear();
+
 }
 
 void loop()
 {
+  /*
   Serial.println("[loop] Début boucle principale");
   motors.stop();
 
@@ -48,4 +62,5 @@ void loop()
 
   Serial.println("[loop] Fin boucle principale");
   delay(500);
+  */
 }
